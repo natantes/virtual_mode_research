@@ -17,7 +17,6 @@ VARIABLE NAME DESCRIPTIONS:
 "lowincome": Proporortion of low income students for given school
 "totaltested": Total number of students tested (enrolled for dropout)
  for given school
-"t18", "t19", etc: Time fixed effects where "txx" indicated dummy for year xx
 
 */
 
