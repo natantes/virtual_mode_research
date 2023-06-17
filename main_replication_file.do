@@ -11,6 +11,7 @@ VARIABLE NAME DESCRIPTIONS:
 "hybridper": Percentage of hybrid learing for the year\
 "white": percentage of white students enrolled
 "black": Percentage of black students enrolled
+"hispanic": Percentage of hispanic students enrolled
 "asian": Percentage of asian students enrolled
 "disability": Percentage of students with diabilities
 "classsize": Average class size for given school
