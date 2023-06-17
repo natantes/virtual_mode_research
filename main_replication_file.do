@@ -17,8 +17,7 @@ TEST DATASET:
 "hispanic": Percentage of hispanic students enrolled
 "asian": Percentage of asian students enrolled
 "lowincome": Proporortion of low income students for given school
-"totaltested": Total number of students tested (enrolled for dropout)
- for given school
+"totalenroll": Total number of students enrolled
 
 DROPOUT DATASET:
 "schoolcode": School Identifier
@@ -32,6 +31,7 @@ DROPOUT DATASET:
 "hispanic": Percentage of hispanic students enrolled
 "asian": Percentage of asian students enrolled
 "lowincome": Proporortion of low income students for given school
+"totalenroll": Total number of students enrolled
 
 */
 
