@@ -5,6 +5,8 @@
 VARIABLE NAME DESCRIPTIONS:
 
 TEST DATASET:
+"schoolcode": School Identifier
+"year": School Year
 "elapass": Ela Test Pass Rate
 "mathpass": Math Test Pass Rate
 "schoolmode": Share of "virtual learning" using V computation
@@ -19,6 +21,8 @@ TEST DATASET:
  for given school
 
 DROPOUT DATASET:
+"schoolcode": School Identifier
+"year": School Year
 "dropout": Dropout Rate
 "schoolmode": Share of "virtual learning" using V computation
 "virtualper": Percentage of virtual learning for the year
