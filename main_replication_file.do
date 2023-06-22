@@ -17,7 +17,7 @@ TEST DATASET:
 "hispanic": Percentage of hispanic students enrolled
 "asian": Percentage of asian students enrolled
 "lowincome": Proporortion of low income students for given school
-"totalenroll": Total number of students enrolled
+"totaltested": Total number of students enrolled
 
 DROPOUT DATASET:
 "schoolcode": School Identifier
@@ -25,7 +25,7 @@ DROPOUT DATASET:
 "dropout": Dropout Rate
 "schoolmode": Share of "virtual learning" using V computation
 "virtualper": Percentage of virtual learning for the year
-"hybridper": Percentage of hybrid learing for the year\
+"hybridper": Percentage of hybrid learing for the year
 "white": percentage of white students enrolled
 "black": Percentage of black students enrolled
 "hispanic": Percentage of hispanic students enrolled
