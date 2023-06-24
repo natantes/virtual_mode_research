@@ -17,6 +17,7 @@ TEST DATASET:
 "hispanic": Percentage of hispanic students enrolled
 "asian": Percentage of asian students enrolled
 "lowincome": Proporortion of low income students for given school
+"charter": Indicator for whether given school is charter
 "totaltested": Total number of students tested
 
 DROPOUT DATASET:
@@ -31,6 +32,7 @@ DROPOUT DATASET:
 "hispanic": Percentage of hispanic students enrolled
 "asian": Percentage of asian students enrolled
 "lowincome": Proporortion of low income students for given school
+"charter": Indicator for whether given school is charter
 "totalenroll": Total number of students enrolled
 
 */
