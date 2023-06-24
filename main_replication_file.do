@@ -7,34 +7,66 @@ VARIABLE NAME DESCRIPTIONS:
 TEST DATASET:
 "schoolcode": School Identifier
 "year": School Year
+"charter": Indicator for whether given school is charter
 "elapass": Ela Test Pass Rate
 "mathpass": Math Test Pass Rate
 "schoolmode": Share of "virtual learning" using V computation
 "virtualper": Percentage of virtual learning for the year
-"hybridper": Percentage of hybrid learing for the year\
+"hybridper": Percentage of hybrid learing for the year
+"totaltested": Total number of students tested
+"lowincome": Proporortion of low income students for given school
 "white": percentage of white students enrolled
 "black": Percentage of black students enrolled
 "hispanic": Percentage of hispanic students enrolled
 "asian": Percentage of asian students enrolled
-"lowincome": Proporortion of low income students for given school
-"charter": Indicator for whether given school is charter
-"totaltested": Total number of students tested
+
+final_cols = [
+'schoolcode',
+ 'year',
+ 'charter',
+ 'elapass',
+ 'mathpass',
+ 'schoolmode',
+ 'virtualper',
+ 'hybridper',
+ 'totalenroll',
+ 'lowincome',
+ 'white',
+ 'black',
+ 'hispanic',
+ 'asian',
+      ]
 
 DROPOUT DATASET:
 "schoolcode": School Identifier
 "year": School Year
+"charter": Indicator for whether given school is charter
 "dropout": Dropout Rate
 "schoolmode": Share of "virtual learning" using V computation
 "virtualper": Percentage of virtual learning for the year
 "hybridper": Percentage of hybrid learing for the year
+"totalenroll": Total number of students enrolled
+"lowincome": Proporortion of low income students for given school
 "white": percentage of white students enrolled
 "black": Percentage of black students enrolled
 "hispanic": Percentage of hispanic students enrolled
 "asian": Percentage of asian students enrolled
-"lowincome": Proporortion of low income students for given school
-"charter": Indicator for whether given school is charter
-"totalenroll": Total number of students enrolled
 
+final_cols = [
+'schoolcode',
+ 'year',
+ 'charter',
+ 'dropout',
+ 'schoolmode',
+ 'virtualper',
+ 'hybridper',
+ 'totalenroll',
+ 'lowincome',
+ 'white',
+ 'black',
+ 'hispanic',
+ 'asian',
+      ]
 */
 
 
