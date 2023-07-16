@@ -68,214 +68,141 @@ final_cols = [
       ]
 */
 
+ssc install reghdfe
+
+
+// IMPORT MATH DATASET
+insheet using "/Users/natan/Dev/virtual_mode_research/final_data_all_states/mathpass_district_allstates.csv", clear
+
+set emptycells drop 
+
+encode schoolcode, gen(schoolcodenum)
+encode districtcode, gen(district)
+encode countycode,gen(county)
+encode state, gen(statecode)
+
+g H_int = hispanic * remote
+g B_int = black * remote
+g lowincome_int = remote * lowincome
+
+// Define periods
+gen period_before = year <= 2019
+gen period_after = year > 2019
+
+// Run the regression for the before 2019 period
+reghdfe mathpass white black hispanic charter i.statecode i.year lowincome ///
+[aweight=totaltested] if period_before == 1, absorb(district schoolcode) cluster(district) 
+
+estimates store benchmark
+
+// Predict mathpass for the 2017-2019 period
+predict mathpass_expected if period_before == 1, xb
+
+// Define performance_diff for the 2019-2021 period
+gen performance_diff = mathpass - mathpass_expected 
+
+// Run the regression on performance_diff for the 2019-2021 period
+reg performance_diff remote white black hispanic charter lowincome ///
+[aweight=totaltested] if period_after == 1, robust
+
+
+
+reghdfe mathpass hybridper virtualper white black hispanic ///
+charter i.statecode i.year lowincome [aweight=totaltested], ///
+absorb(district schoolcode) cluster(district)
+
+reghdfe mathpass remote H_int B_int /// 
+white black hispanic charter lowincome ///
+i.statecode i.year [aweight=totaltested], ///
+absorb(district schoolcode) cluster(district)
+
+reghdfe mathpass remote white black hispanic /// 
+charter i.statecode##i.year lowincome [aweight=totaltested], ///
+absorb(district schoolcode) cluster(district)
+
+reghdfe mathpass remote H_int B_int white black /// 
+hispanic charter i.statecode##i.year /// 
+lowincome [aweight=totaltested], ///
+absorb(district schoolcode) cluster(district)
+
+
 
 
 
 // IMPORT ELA DATASET
-insheet using "/Users/natan/Dev/econometrics_compeition/new_ela.csv", clear
+insheet using "/Users/natan/Dev/virtual_mode_research/final_data_all_states/elapass_district_allstates.csv", clear
 
-// CREATE DESC TABLES
-estpost sum elapass schoolmode white black hispanic disability classsize ///
-lowincome totaltested
-est store DESC1
+encode schoolcode, gen(schoolcodenum)
+encode districtcode, gen(district)
+encode countycode,gen(county)
+encode state, gen(statecode)
 
-// GENERATE TIME DUMMIES FOR TIME FIXED EFFECTS
-g t18 = 1 if year == 2018
-replace t18 = 0 if year != 2018
-g t19 = 1 if year == 2019
-replace t19 = 0 if year != 2019
-g t21 = 1 if year == 2021
-replace t21 = 0 if year != 2021
-
-// CREATE INTERACTION VARIABLES
-g H_int = hispanic * schoolmode
-g B_int = black * schoolmode
-g classize_int = classsize * schoolmode
-g lowincome_int = schoolmode * lowincome
+g H_int = hispanic * remote
+g B_int = black * remote
+g lowincome_int = remote * lowincome
 
 // REGRESSIONS FOR ELA PASS RATE
-eststo ELA_BASE: areg elapass schoolmode white black hispanic asian disability /// 
-lowincome t18 t19 [aweight=totaltested], absorb(schoolcode) /// 
-vce(cluster schoolcode)
+reghdfe elapass remote white black hispanic charter /// 
+i.statecode i.year lowincome [aweight=totaltested], ///
+absorb(district schoolcode) cluster(district)
 
-eststo ELA_DEMO_INT: areg elapass schoolmode H_int B_int  black hispanic asian ///
-disability t18 t19 lowincome [aweight=totaltested] ///
-, absorb(schoolcode) vce(cluster schoolcode)
+reghdfe elapass hybridper virtualper white black hispanic ///
+charter i.statecode i.year lowincome [aweight=totaltested], ///
+absorb(district schoolcode) cluster(district)
 
-eststo ELA_CLASS_INT: areg elapass schoolmode white black hispanic disability classize_int /// 
-lowincome t18 t19 [aweight=totaltested], absorb(schoolcode) /// 
-vce(cluster schoolcode)
+reghdfe elapass remote H_int B_int /// 
+white black hispanic charter lowincome ///
+i.statecode i.year [aweight=totaltested], ///
+absorb(district schoolcode) cluster(district)
 
-eststo ELA_LOWINC_INT: areg elapass schoolmode white black hispanic disability lowincome_int /// 
-lowincome t18 t19 [aweight=totaltested], absorb(schoolcode) /// 
-vce(cluster schoolcode)
+reghdfe elapass remote white black hispanic /// 
+charter i.statecode##i.year lowincome [aweight=totaltested], ///
+absorb(district schoolcode) cluster(district)
 
-
-
-
-
-// insheet using "/Users/natan/Dev/virtual_mode_research/new_math.csv", clear
-insheet using "/Dev/virtual_mode_research/new_math.csv", clear
-
-// CREATE DESC TABLES
-estpost sum mathpass schoolmode white black hispanic disability classsize /// 
-lowincome totaltested
-est store DESC2
-
-// GENERATE TIME DUMMIES FOR TIME FIXED EFFECTS
-g t18 = 1 if year == 2018
-replace t18 = 0 if year != 2018
-g t19 = 1 if year == 2019
-replace t19 = 0 if year != 2019
-g t21 = 1 if year == 2021
-replace t21 = 0 if year != 2021
-
-g H_int = hispanic * schoolmode
-g B_int = black * schoolmode
-g classize_int = classsize * schoolmode
-g lowincome_int = schoolmode * lowincome
-g retention_int = schoolmode * retention
-
-
-// REGRESSIONS FOR MATH PASS RATE
-eststo MATH_BASE: areg mathpass schoolmode white black hispanic asian disability ///
-lowincome t18 t19 [aweight=totaltested], absorb(schoolcode) ///
-vce(cluster schoolcode)
-
-eststo MATH_DEMO_INT: areg mathpass schoolmode white black hispanic asian disability  ///
-t18 t19 H_int B_int lowincome  [aweight=totaltested] ///
-, absorb(schoolcode) vce(cluster schoolcode)
-
-eststo MATH_CLASS_INT: areg mathpass schoolmode white black hispanic disability classize_int /// 
-lowincome t18 t19 [aweight=totaltested], absorb(schoolcode) /// 
-vce(cluster schoolcode)
-
-lincom classize_int + schoolmode
-
-eststo MATH_LOWINC_INT: areg mathpass schoolmode white black hispanic disability lowincome_int /// 
-lowincome t18 t19 [aweight=totaltested], absorb(schoolcode) /// 
-vce(cluster schoolcode)
+reghdfe elapass remote H_int B_int white black /// 
+hispanic charter i.statecode##i.year /// 
+lowincome [aweight=totaltested], ///
+absorb(district schoolcode) cluster(district)
 
 
 
 
+// IMPORT DROPOUT DATASET
+insheet using "/Users/natan/Dev/virtual_mode_research/final_data_all_states/dropout_district_allstates.csv", clear
 
-// insheet using "/Users/natan/Dev/econometrics_compeition/new_drop.csv", clear
-// insheet using "/Dev/econometrics_compeition/new_drop.csv", clear
-// insheet using "C:/Dev/virtual_mode_research/ny_drop_data_192122.csv", clear
-insheet using "C:/Dev/virtual_mode_research/final_drop.csv", clear
+encode schoolcode, gen(schoolcodenum)
+encode districtcode, gen(district)
+encode state, gen(statecode)
 
-drop if year == 2018
+drop if totalenrolled < 0
 
-// encode schoolcode, generate(finalschoolcode)
+g H_int = hispanic * remote
+g B_int = black * remote
+g lowincome_int = remote * lowincome
 
-rename totalenroll totaltested
-rename blackenroll black
-rename whiteenroll white
-rename hispanicenroll hispanic
-rename lowincomeenroll lowincome
+reghdfe dropout remote white black hispanic charter /// 
+i.statecode i.year lowincome [aweight=totalenrolled], ///
+absorb(district schoolcode) cluster(district)
 
-// estpost sum dropout schoolmode white black hispanic classsize lowincome ///
-// totaltested retention attendance 
-// est store DESC3
+reghdfe dropout hybridper virtualper white black hispanic ///
+charter i.statecode i.year lowincome [aweight=totalenrolled], ///
+absorb(district schoolcode) cluster(district)
 
-// generate time fixed effects
-g t18 = 1 if year == 2018
-replace t18 = 0 if year != 2018
-g t19 = 1 if year == 2019
-replace t19 = 0 if year != 2019
-g t21 = 1 if year == 2021
-replace t21 = 0 if year != 2021
+reghdfe dropout remote H_int B_int /// 
+white black hispanic charter lowincome ///
+i.statecode i.year [aweight=totalenrolled], ///
+absorb(district schoolcode) cluster(district)
 
-g H_int = hispanic * schoolmode
-g B_int = black * schoolmode
-// g classize_int = classsize * schoolmode
-g lowincome_int = schoolmode * lowincome
-g virtual_per_int = virtual_per * lowincome
-g hybrid_per_int = hybrid_per * lowincome
-replace virtual_per = virtual_per * 100
+reghdfe dropout remote white black hispanic /// 
+charter i.statecode##i.year lowincome [aweight=totalenrolled], ///
+absorb(district schoolcode) cluster(district)
 
-// REGRESSIONS FOR MATH PASS RATE
-eststo DROP_BIAS: reg dropout schoolmode t21, absorb(schoolcode)
-
-eststo DROP_BASE: areg dropout schoolmode white black hispanic lowincome ///
-t21 [aweight=totaltested], absorb(schoolcode) vce(cluster schoolcode)
-
-eststo DROP_ALT: areg dropout virtual_per hybrid_per white black hispanic ///
-lowincome t21 [aweight=totaltested], absorb(schoolcode) vce(cluster schoolcode)
-
-eststo DROP_LOWINC_INT: areg dropout schoolmode white black hispanic lowincome /// 
-low_income_int t21 [aweight=totaltested], absorb(schoolcode) /// 
-vce(cluster schoolcode)
-
-eststo DROP_CLASS_INT: areg dropout schoolmode white black hispanic lowincome /// 
-low_income_int t21 [aweight=totaltested], absorb(schoolcode) /// 
-vce(cluster schoolcode)
-
-// eststo DROP_NORMAL: areg dropout virtual_per hybrid_per white black hispanic lowincome ///
-// t21 [aweight=totaltested], absorb(schoolcode) vce(cluster schoolcode)
-//
-// eststo DROP_LOWINC: areg dropout schoolmode white black hispanic lowincome_int lowincome ///
-// t21 [aweight=totaltested], absorb(schoolcode) vce(cluster schoolcode)
-
-// drop if retention < 40
-// g retention_int = schoolmode * retention
-//
-// eststo DROP_RET: areg dropout schoolmode white black hispanic  retention_int lowincome ///
-// t21 [aweight=totaltested], absorb(schoolcode) vce(cluster schoolcode)
-//
-// eststo DROP_NORMAL: areg dropout schoolmode white black hispanic lowincome retention ///
-// t21 [aweight=totaltested], absorb(schoolcode) vce(cluster schoolcode)
-//
-// eststo DROP_NORMAL: areg dropout schoolmode white black hispanic lowincome retention  ///
-// t21 [aweight=totaltested] if schoolmode <= 0.75, absorb(schoolcode) vce(cluster schoolcode)
-//
-// eststo DROP_NORMAL: areg dropout schoolmode white black hispanic lowincome retention  ///
-// t21 [aweight=totaltested] if schoolmode <= 0.50, absorb(schoolcode) vce(cluster schoolcode)
-//
-// eststo DROP_NORMAL: areg dropout schoolmode white black hispanic lowincome retention  ///
-// t21 [aweight=totaltested] if schoolmode <= 0.25, absorb(schoolcode) vce(cluster schoolcode)
-//
-//
-//
-// eststo DROP_NORMAL: areg dropout schoolmode white black hispanic lowincome_int lowincome retention attendance ///
-// t19 [aweight=totaltested], absorb(schoolcode) vce(cluster schoolcode)
-//
-// eststo DROP_NORMAL: areg dropout schoolmode white black hispanic lowincome_int lowincome retention attendance ///
-// t19 [aweight=totaltested] if schoolmode <= 0.75, absorb(schoolcode) vce(cluster schoolcode)
-//
-// eststo DROP_NORMAL: areg dropout schoolmode white black hispanic lowincome_int lowincome retention attendance ///
-// t19 [aweight=totaltested] if schoolmode <= 0.50, absorb(schoolcode) vce(cluster schoolcode)
-//
-// eststo DROP_NORMAL: areg dropout schoolmode white black hispanic lowincome_int lowincome retention attendance ///
-// t19 [aweight=totaltested] if schoolmode <= 0.25, absorb(schoolcode) vce(cluster schoolcode)
+reghdfe dropout remote H_int B_int white black /// 
+hispanic charter i.statecode##i.year /// 
+lowincome [aweight=totalenrolled], ///
+absorb(district schoolcode) cluster(district)
 
 
-
-
-// insheet using "/Users/natan/Dev/econometrics_compeition/new_drop.csv", clear
-//
-// rename totalenroll totaltested
-// rename blackenroll black
-// rename whiteenroll white
-// rename hispanicenroll hispanic
-// rename lowincomeenroll lowincome
-//
-// estpost sum dropout schoolmode white black hispanic classsize lowincome ///
-// totaltested retention attendance 
-// est store DESC3
-//
-// // generate time fixed effects
-// g t18 = 1 if year == 2018
-// replace t18 = 0 if year != 2018
-// g t19 = 1 if year == 2019
-// replace t19 = 0 if year != 2019
-// g t21 = 1 if year == 2021
-// replace t21 = 0 if year != 2021
-//
-// g H_int = hispanic * schoolmode
-// g B_int = black * schoolmode
-// g classize_int = classsize * schoolmode
 
 
 
