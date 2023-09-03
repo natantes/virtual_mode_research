@@ -23,7 +23,7 @@ school_low_2019 <- subset(school_data_2019, highvirtual == 0)
 
 ### DROPOUT ###
 
-par(mar=c(4.5,4.5,1,2))
+### par(mar=c(4.5,4.5,1,2))
 
 kd_high_2021 <- density(school_high_2021$dropout, bw="SJ", kernel="g")
 kd_low_2021 <- density(school_low_2021$dropout, bw="SJ", kernel="g")
